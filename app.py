@@ -6,29 +6,43 @@ from concurrent.futures import ThreadPoolExecutor
 app = Flask(__name__)
 
 # Target 4:3 size
-TARGET_W = 1200
-TARGET_H = 900
+TARGET_W = 1600
+TARGET_H = 1200
 PPI = 150
 
 def process_image(img_bytes, filename):
     """
-    Resize image to fit 4:3 (without cropping),
-    pad with white to exact 4:3, set PPI, return (filename, bytes)
+    Resize image to fit 1600x1200 (4:3) without cropping,
+    pad with white to exact size, set high-quality WebP.
     """
     try:
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
-        # Resize proportionally to fit inside 4:3
+        # Resize proportionally to fit inside 1600x1200
         img = ImageOps.contain(img, (TARGET_W, TARGET_H), Image.LANCZOS)
 
-        # Pad to exact 4:3
-        img = ImageOps.pad(img, (TARGET_W, TARGET_H), method=Image.LANCZOS, color=(255,255,255), centering=(0.5,0.5))
+        # Pad to exact 1600x1200 (white background, centered)
+        img = ImageOps.pad(
+            img,
+            (TARGET_W, TARGET_H),
+            method=Image.LANCZOS,
+            color=(255, 255, 255),
+            centering=(0.5, 0.5)
+        )
 
         # Set PPI
         img.info['dpi'] = (PPI, PPI)
 
+        # Save to WebP (high-quality)
         buf = io.BytesIO()
-        img.save(buf, format="WEBP", quality=85, method=6, optimize=True, dpi=(PPI, PPI))
+        img.save(
+            buf,
+            format="WEBP",
+            quality=95,      # high quality
+            method=6,
+            optimize=True,
+            dpi=(PPI, PPI)
+        )
         buf.seek(0)
         return filename.rsplit(".", 1)[0] + ".webp", buf.read()
     except Exception as e:
@@ -45,10 +59,10 @@ def process():
     zip_buffer = io.BytesIO()
     results = []
 
-    # Prepare (bytes, filename) list for threads
+    # Read files into memory
     tasks = [(file.read(), file.filename) for file in files]
 
-    # Use ThreadPoolExecutor for parallel processing
+    # Process images in parallel
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = [executor.submit(process_image, b, name) for b, name in tasks]
         for f in futures:

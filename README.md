@@ -3,8 +3,6 @@
 Resize images to 4:3, export as WebP, set 150 PPI, and download as a batch ZIP.  
 Designed for WordPress or general use. Supports multiple image uploads at once.
 
-[![Run on Replit](https://replit.com/badge/github/YOUR_USERNAME/imageoptimizer)](https://replit.com/github/YOUR_USERNAME/imageoptimizer)
-
 ---
 
 ## Features
