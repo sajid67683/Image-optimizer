@@ -1,6 +1,3 @@
-flask
-pillow
-numpy
 opencv-python
 rembg
 Flask==2.3.3
