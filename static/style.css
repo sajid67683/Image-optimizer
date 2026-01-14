@@ -1,0 +1,19 @@
+.remove-btn {
+    background: none;
+    border: none;
+    color: #e53935;
+    font-size: 18px;       /* slightly smaller for better centering */
+    width: 24px;
+    height: 24px;
+    display: flex;          /* flex to center content */
+    align-items: center;    /* vertical center */
+    justify-content: center;/* horizontal center */
+    line-height: 1;         /* remove extra vertical spacing from font */
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+
+.remove-btn:hover {
+    color: #b71c1c;
+}
