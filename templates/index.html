@@ -1,241 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Image Optimizer</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin:0; padding:0; font-family:'Inter', sans-serif; }
-body {
-    background: #f0f4f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-}
-
-/* --- Card Container --- */
-.card {
-    background:#fff;
-    border-radius:16px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-    max-width:600px;
-    width:100%;
-    padding:30px 25px;
-    text-align:center;
-}
-
-/* --- Headers --- */
-.card h2 { color:#00bcd4; font-weight:600; margin-bottom:8px; font-size:24px; }
-.card p.subtitle { color:#555; margin-bottom:20px; }
-
-/* --- File Drop Area --- */
-.file-drop-area {
-    border:2px dashed #00bcd4;
-    border-radius:12px;
-    padding:30px;
-    cursor:pointer;
-    transition:background 0.3s, border-color 0.3s;
-    margin-bottom:20px;
-}
-.file-drop-area:hover { background:#e0f7fa; border-color:#00acc1; }
-.file-drop-area input { display:none; }
-.file-drop-area label { display:block; color:#00bcd4; font-weight:600; cursor:pointer; }
-
-/* --- Button --- */
-button {
-    width:100%;
-    background:#ffc107;
-    border:none;
-    color:#222;
-    font-weight:600;
-    font-size:16px;
-    padding:14px;
-    border-radius:12px;
-    cursor:pointer;
-    transition:transform 0.2s, box-shadow 0.2s;
-}
-button:hover { transform:translateY(-2px); box-shadow:0 6px 15px rgba(0,0,0,0.15); }
-
-/* --- Progress Bar --- */
-progress {
-    width:100%;
-    height:20px;
-    border-radius:12px;
-    overflow:hidden;
-    margin-top:20px;
-    appearance:none;
-}
-progress::-webkit-progress-bar { background-color:#eee; }
-progress::-webkit-progress-value { background-color:#00bcd4; border-radius:12px; transition:width 0.2s ease; }
-progress::-moz-progress-bar { background-color:#00bcd4; border-radius:12px; }
-
-#status { margin-top:8px; font-weight:500; color:#555; }
-
-/* --- File List --- */
-.file-list {
-    text-align:left;
-    max-height:250px;
-    overflow-y:auto;
-    margin-bottom:20px;
-    border:1px solid #eee;
-    border-radius:10px;
-    padding:5px;
-    background:#fafafa;
-}
-.file-item {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:6px 8px;
-    border-bottom:1px solid #eee;
-}
-.file-item:last-child { border-bottom:none; }
-.file-item img {
-    width:50px;
-    height:50px;
-    object-fit:cover;
-    border-radius:6px;
-    flex-shrink:0;
-    margin-right:10px;
-}
-.file-item span {
-    flex:1;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    margin-right:10px;
-}
-.remove-btn {
-    background: none;
-    border: none;
-    color: #e53935;
-    font-size: 18px;       /* slightly smaller for better centering */
-    width: 24px;
-    height: 24px;
-    display: flex;          /* flex to center content */
-    align-items: center;    /* vertical center */
-    justify-content: center;/* horizontal center */
-    line-height: 1;         /* remove extra vertical spacing from font */
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: color 0.2s;
-}
-
-.remove-btn:hover {
-    color: #b71c1c;
-}
-/* --- Footer --- */
-.footer { margin-top:20px; font-size:12px; color:#999; text-align:center; }
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Optimizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
 
-<div class="card">
-    <h2>Image Optimizer</h2>
-    <p class="subtitle">Batch upload, centered 4:3, WebP output</p>
-
-    <div class="file-drop-area">
-        <input type="file" id="images" multiple accept="image/*">
-        <label for="images">Click or Drag & Drop Images Here</label>
+    <div class="card">
+        <h2>Image Optimizer</h2>
+        <p class="subtitle">Batch upload, centered 4:3, WebP output</p>
+        <div class="file-drop-area">
+            <input type="file" id="images" multiple accept="image/*">
+            <label for="images">Click or Drag & Drop Images Here</label>
+        </div>
+        <div class="file-list" id="file-list"></div>
+        <div class="quality-row">
+            <label for="quality">WebP Quality: <span id="qualityValue">95</span></label>
+            <input type="range" id="quality" min="50" max="100" value="95" step="1">
+        </div>
+        <button onclick="upload()">Optimize Images</button>
+        <progress id="progress" value="0" max="100"></progress>
+        <p id="status"></p>
+        <div class="footer">
+            Powered by Your mom
+        </div>
     </div>
-
-    <div class="file-list" id="file-list"></div>
-
-    <button onclick="upload()">Optimize Images</button>
-
-    <progress id="progress" value="0" max="100"></progress>
-    <p id="status"></p>
-
-    <div class="footer">
-        Powered by Your mom
-    </div>
-</div>
-
-<script>
-let fileArray = [];
-
-const input = document.getElementById('images');
-const dropArea = document.querySelector('.file-drop-area');
-const fileList = document.getElementById('file-list');
-
-function updateFileList() {
-    fileList.innerHTML = '';
-    fileArray.forEach((file, index) => {
-        const item = document.createElement('div');
-        item.className = 'file-item';
-
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-
-        const span = document.createElement('span');
-        span.innerText = file.name;
-
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'remove-btn';
-        removeBtn.innerHTML = '&times;';
-        removeBtn.title = 'Remove';
-        removeBtn.onclick = () => {
-            fileArray.splice(index, 1);
-            updateFileList();
-        };
-
-        item.appendChild(img);
-        item.appendChild(span);
-        item.appendChild(removeBtn);
-        fileList.appendChild(item);
-    });
-}
-
-input.addEventListener('change', () => {
-    fileArray.push(...input.files);
-    updateFileList();
-});
-
-// Drag & Drop
-dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.style.background = '#e0f7fa'; });
-dropArea.addEventListener('dragleave', e => { e.preventDefault(); dropArea.style.background = 'transparent'; });
-dropArea.addEventListener('drop', e => {
-    e.preventDefault(); dropArea.style.background = 'transparent';
-    const dtFiles = Array.from(e.dataTransfer.files);
-    fileArray.push(...dtFiles);
-    updateFileList();
-});
-
-function upload() {
-    if (!fileArray.length) return alert("Select images first");
-    const formData = new FormData();
-    fileArray.forEach(f => formData.append('images', f));
-
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/process', true);
-    xhr.responseType = 'blob';
-
-    xhr.upload.onprogress = e => {
-        if (e.lengthComputable) {
-            const percent = (e.loaded / e.total) * 100;
-            document.getElementById("progress").value = percent;
-            document.getElementById("status").innerText = `Uploading: ${Math.round(percent)}%`;
-        }
-    };
-
-    xhr.onload = () => {
-        const blob = xhr.response;
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'optimized_images.zip';
-        link.click();
-        URL.revokeObjectURL(link.href);
-        document.getElementById("status").innerText = "Done ✔";
-        document.getElementById("progress").value = 100;
-    };
-
-    xhr.send(formData);
-}
-</script>
-
+    <script src="/static/script.js"></script>
 </body>
+
 </html>
