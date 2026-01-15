@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: "Inter", sans-serif;
+    font-family: "Maven Pro", sans-serif;
 }
 
 body {
@@ -17,21 +17,25 @@ body {
 /* --- Card Container --- */
 .card {
     background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    max-width: 600px;
+    border-radius: 18px;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.1);
+    max-width: 760px; /* bigger container */
     width: 100%;
-    padding: 30px 25px;
+    padding: 36px 32px; /* more breathing space */
     text-align: center;
+    position: relative;
 }
+
 
 /* --- Headers --- */
 .card h2 {
     color: #00bcd4;
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 28px;
+    letter-spacing: 0.3px;
 }
+
 
 .card p.subtitle {
     color: #555;
@@ -164,8 +168,8 @@ button:hover {
 }
 
 .file-item small {
-  font-size: 12px;
-  line-height: 1.2;
+    font-size: 12px;
+    line-height: 1.2;
 }
 
 
@@ -273,4 +277,124 @@ progress::-moz-progress-bar {
     font-size: 12px;
     color: #999;
     text-align: center;
+}
+
+.results {
+    text-align: left;
+    margin-top: 14px;
+    border: 1px solid #eee;
+    background: #fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    max-height: 220px;
+    overflow: auto;
+}
+
+
+/* ---------- Theme Toggle ---------- */
+.theme-toggle {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    transition: background 0.3s, transform 0.2s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+}
+
+.theme-toggle .icon {
+    position: absolute;
+    font-size: 18px;
+    transition: opacity 0.25s, transform 0.25s;
+}
+
+.theme-toggle .sun {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.theme-toggle .moon {
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+/* ---------- DARK MODE ---------- */
+body.dark {
+    background: #0f172a;
+}
+
+body.dark .card {
+    background: #111827;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+}
+
+body.dark .card h2 {
+    color: #38d9e8;
+}
+
+body.dark .subtitle {
+    color: #cbd5e1;
+}
+
+body.dark .file-drop-area {
+    border-color: #38d9e8;
+}
+
+body.dark .file-drop-area:hover {
+    background: rgba(56, 217, 232, 0.12);
+}
+
+body.dark .file-list {
+    background: #0b1220;
+    border-color: #1f2937;
+}
+
+body.dark .file-item {
+    border-bottom-color: #1f2937;
+}
+
+body.dark .file-item span {
+    color: #e5e7eb;
+}
+
+body.dark small {
+    color: #9ca3af !important;
+}
+
+body.dark progress::-webkit-progress-bar {
+    background-color: #1f2937;
+}
+
+body.dark progress::-webkit-progress-value {
+    background-color: #38d9e8;
+}
+
+body.dark button {
+    background: #facc15;
+    color: #111;
+}
+
+/* Toggle icon swap in dark mode */
+body.dark .theme-toggle {
+    background: #020617;
+}
+
+body.dark .theme-toggle .sun {
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+body.dark .theme-toggle .moon {
+    opacity: 1;
+    transform: scale(1);
 }

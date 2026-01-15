@@ -5,13 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Optimizer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
 
     <div class="card">
+        <div class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+            <span class="icon sun">☀</span>
+            <span class="icon moon">🌙</span>
+        </div>
         <h2>Image Optimizer</h2>
         <p class="subtitle">Batch upload, centered 4:3, WebP output</p>
         <div class="file-drop-area">
@@ -26,6 +30,7 @@
         <button onclick="upload()">Optimize Images</button>
         <progress id="progress" value="0" max="100"></progress>
         <p id="status"></p>
+        <div id="results" class="results"></div>
         <div class="footer">
             Powered by Your mom
         </div>
