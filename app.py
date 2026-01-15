@@ -28,6 +28,43 @@ def clamp_quality(q: int) -> int:
 
 
 def process_one_image(img_bytes: bytes, filename: str, quality: int):
+    img = Image.open(io.BytesIO(img_bytes))
+
+    # --- FIX: force white background for transparent images ---
+    if img.mode in ("RGBA", "LA") or ("transparency" in img.info):
+        background = Image.new("RGB", img.size, (255, 255, 255))
+        background.paste(img, mask=img.split()[-1])
+        img = background
+    else:
+        img = img.convert("RGB")
+
+    # Fit inside 1600x1200 without cropping
+    img = ImageOps.contain(img, (TARGET_W, TARGET_H), Image.LANCZOS)
+
+    # Pad to exact 1600x1200 (white background, centered)
+    img = ImageOps.pad(
+        img,
+        (TARGET_W, TARGET_H),
+        method=Image.LANCZOS,
+        color=(255, 255, 255),
+        centering=(0.5, 0.5),
+    )
+
+    buf = io.BytesIO()
+    img.save(
+        buf,
+        format="WEBP",
+        quality=quality,
+        method=6,
+        optimize=True,
+        dpi=(PPI, PPI),
+    )
+    buf.seek(0)
+
+    out_name = filename.rsplit(".", 1)[0] + ".webp"
+    out_bytes = buf.read()
+    return out_name, out_bytes, len(out_bytes)
+
     """
     Returns:
     (out_name, out_bytes, out_size_bytes)
